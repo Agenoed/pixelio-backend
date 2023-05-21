@@ -2,20 +2,17 @@ const express = require("express");
 const Matrix = require("../models/matrix");
 
 const router = express.Router();
-module.exports = router;
 
 // Get Matrices List
 router.get("/", async (req, res) => {
     var matrices = await Matrix.find();
     var responseList = [];
     
-    matrices.forEach(matrix => {
-        responseList.push({
-            id: matrix._id,
-            name: matrix.name,
-            publicId: matrix.publicId
-        });
-    });
+    matrices.forEach(matrix => responseList.push({
+        id: matrix._id,
+        name: matrix.name,
+        publicId: matrix.publicId
+    }));
 
     res.status(200).json({
         list: responseList,
@@ -41,7 +38,7 @@ router.post("/", async (req, res) => {
         publicId: req.body.publicId
     });
 
-    matrix.save();
+    await matrix.save();
 
     res.status(200).json({
         id: matrix._id,
@@ -56,7 +53,7 @@ router.put("/:id", async (req, res) => {
     
     matrix.name = req.body.name;
     matrix.publicId = req.body.publicId;
-    matrix.save();
+    await matrix.save();
 
     res.status(200).json({
         id: matrix._id,
@@ -71,3 +68,5 @@ router.delete("/:id", async (req, res) => {
 
     res.status(200).send();
 });
+
+module.exports = router;
