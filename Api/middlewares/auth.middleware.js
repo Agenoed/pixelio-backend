@@ -18,7 +18,6 @@ const authMiddleware = (req, res, next) => {
 
         var token = authHeader.split(' ')[1];
         var tokenValidationResult = jwtManager.validate(token);
-        console.log(tokenValidationResult);
 
         if (tokenValidationResult.isSuccess) {
             req.userSession = {
@@ -36,7 +35,7 @@ const authMiddleware = (req, res, next) => {
             });
         }
 
-        next();
+        return next();
     } else {
         return res.status(403).json({
             message: "Authorization Failed: Non-Bearer Authentication is not supported."

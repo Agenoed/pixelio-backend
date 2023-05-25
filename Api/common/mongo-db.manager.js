@@ -6,7 +6,7 @@ const connect = () => {
     mongoose.connect(connectionString);
 
     mongoose.connection.on('error', (error) => {
-        console.log(error);
+        // console.log(error);
     });
     
     mongoose.connection.once('connected', () => {

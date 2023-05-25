@@ -4,69 +4,94 @@ const Matrix = require("../entities/matrix.entity");
 const router = express.Router();
 
 // Get Matrices List
-router.get("/", async (req, res) => {
-    var matrices = await Matrix.find();
-    var responseList = [];
-    
-    matrices.forEach(matrix => responseList.push({
-        id: matrix._id,
-        name: matrix.name,
-        publicId: matrix.publicId
-    }));
+router.get("/", async (req, res, next) => {
+    try {
+        var matrices = await Matrix.find();
+        var responseList = [];
+        
+        matrices.forEach(matrix => responseList.push({
+            id: matrix._id,
+            name: matrix.name,
+            publicId: matrix.publicId
+        }));
 
-    res.status(200).json({
-        list: responseList,
-        totalCount: responseList.length
-    });
+        return res.status(200).json({
+            list: responseList,
+            totalCount: responseList.length
+        });
+    }
+    catch (err) {
+        return next(err);
+    }
 });
 
 // Get Matrix by Id
-router.get("/:id", async (req, res) => {
-    var matrix = await Matrix.findById(req.params.id);
+router.get("/:id", async (req, res, next) => {
+    try {
+        var matrix = await Matrix.findById(req.params.id);
 
-    res.status(200).json({
-        id: matrix._id,
-        name: matrix.name,
-        publicId: matrix.publicId
-    });
+        return res.status(200).json({
+            id: matrix._id,
+            name: matrix.name,
+            publicId: matrix.publicId
+        });
+    }
+    catch (err) {
+        return next(err);
+    }
 });
 
 // Сreate Matrix
-router.post("/", async (req, res) => {
-    var matrix = new Matrix({
-        name: req.body.name,
-        publicId: req.body.publicId
-    });
-
-    await matrix.save();
-
-    res.status(200).json({
-        id: matrix._id,
-        name: matrix.name,
-        publicId: matrix.publicId
-    });
+router.post("/", async (req, res, next) => {
+    try {
+        var matrix = new Matrix({
+            name: req.body.name,
+            publicId: req.body.publicId
+        });
+    
+        await matrix.save();
+    
+        return res.status(200).json({
+            id: matrix._id,
+            name: matrix.name,
+            publicId: matrix.publicId
+        });
+    }
+    catch (err) {
+        return next(err);
+    }
 });
 
 // Update Matrix
-router.put("/:id", async (req, res) => {
-    var matrix = await Matrix.findById(req.params.id);
+router.put("/:id", async (req, res, next) => {
+    try {
+        var matrix = await Matrix.findById(req.params.id);
     
-    matrix.name = req.body.name;
-    matrix.publicId = req.body.publicId;
-    await matrix.save();
-
-    res.status(200).json({
-        id: matrix._id,
-        name: matrix.name,
-        publicId: matrix.publicId
-    });
+        matrix.name = req.body.name;
+        matrix.publicId = req.body.publicId;
+        await matrix.save();
+    
+        return res.status(200).json({
+            id: matrix._id,
+            name: matrix.name,
+            publicId: matrix.publicId
+        });
+    }
+    catch (err) {
+        return next(err);
+    }
 });
 
 // Delete Matrix by Id
-router.delete("/:id", async (req, res) => {
-    await Matrix.findByIdAndDelete(req.params.id);
+router.delete("/:id", async (req, res, next) => {
+    try {
+        await Matrix.findByIdAndDelete(req.params.id);
 
-    res.status(200).send();
+        return res.status(200).send();
+    }
+    catch (err) {
+        return next(err);
+    }
 });
 
 module.exports = router;
