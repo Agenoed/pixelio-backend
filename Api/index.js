@@ -1,7 +1,9 @@
 require("dotenv").config();
 
 const express = require("express");
-const mongo = require("./infrastructure/mongo-db-manager");
+const mongo = require("./common/mongo-db-manager");
+
+const authMiddleware = require("./middlewares/auth-middleware");
 
 const authRoutes = require("./routes/auth");
 const usersRoutes = require("./routes/users");
@@ -12,7 +14,10 @@ mongo.connect();
 const app = express();
 
 app.use(express.json());
+
 app.use("/api/auth", authRoutes);
+
+app.use(authMiddleware);
 app.use("/api/users", usersRoutes)
 app.use("/api/matrices", matricesRoutes);
 

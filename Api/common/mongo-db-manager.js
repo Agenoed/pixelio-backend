@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
-const connect = () => {
-    const connectionString = process.env.DATABASE_URL;
+const connectionString = process.env.DATABASE_URL;
 
+const connect = () => {
     mongoose.connect(connectionString);
 
     mongoose.connection.on('error', (error) => {
