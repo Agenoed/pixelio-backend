@@ -1,7 +1,7 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
-const jwtManager = require("../common/jwt-manager");
-const User = require("../models/user");
+const jwtManager = require("../common/jwt.manager");
+const User = require("../entities/user.entity");
 
 const router = express.Router();
 

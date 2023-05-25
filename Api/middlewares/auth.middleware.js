@@ -1,4 +1,4 @@
-var jwtManager = require("../common/jwt-manager");
+var jwtManager = require("../common/jwt.manager");
 
 const authMiddleware = (req, res, next) => {
     var authHeader = req.headers.authorization;
