@@ -1,7 +1,7 @@
 require("dotenv").config();
 
 const express = require("express");
-const mongo = require("./common/mongo-db.manager");
+const mongo = require("./infrastructure/common/mongo-db.manager");
 
 const errorHandlerMiddleware = require("./middlewares/error-handler.middleware");
 const authMiddleware = require("./middlewares/auth.middleware");

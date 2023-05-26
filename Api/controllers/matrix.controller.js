@@ -1,24 +1,15 @@
 const express = require("express");
-const Matrix = require("../entities/matrix.entity");
+const matrixService = require("../services/matrix.service");
 
 const router = express.Router();
 
 // Get Matrices List
 router.get("/", async (req, res, next) => {
     try {
-        var matrices = await Matrix.find();
-        var responseList = [];
-        
-        matrices.forEach(matrix => responseList.push({
-            id: matrix._id,
-            name: matrix.name,
-            publicId: matrix.publicId
-        }));
+        // TODO Add query parametes for sorting/filtering
+        var listResult = await matrixService.getAllAsync();
 
-        return res.status(200).json({
-            list: responseList,
-            totalCount: responseList.length
-        });
+        return res.status(200).json(listResult);
     }
     catch (err) {
         return next(err);
@@ -28,13 +19,11 @@ router.get("/", async (req, res, next) => {
 // Get Matrix by Id
 router.get("/:id", async (req, res, next) => {
     try {
-        var matrix = await Matrix.findById(req.params.id);
-
-        return res.status(200).json({
-            id: matrix._id,
-            name: matrix.name,
-            publicId: matrix.publicId
-        });
+        // TODO Validate data
+        var matrixId = req.params.id;
+        var matrix = await matrixService.getByIdAsync(matrixId);
+        
+        return res.status(200).json(matrix);
     }
     catch (err) {
         return next(err);
@@ -44,18 +33,12 @@ router.get("/:id", async (req, res, next) => {
 // Сreate Matrix
 router.post("/", async (req, res, next) => {
     try {
-        var matrix = new Matrix({
-            name: req.body.name,
-            publicId: req.body.publicId
-        });
-    
-        await matrix.save();
-    
-        return res.status(200).json({
-            id: matrix._id,
-            name: matrix.name,
-            publicId: matrix.publicId
-        });
+        // TODO Validate data
+        var matrixInput = req.body;
+        var matrixId = await matrixService.createAsync(matrixInput);
+        var matrix = await matrixService.getByIdAsync(matrixId);
+        
+        return res.status(200).json(matrix);
     }
     catch (err) {
         return next(err);
@@ -65,17 +48,14 @@ router.post("/", async (req, res, next) => {
 // Update Matrix
 router.put("/:id", async (req, res, next) => {
     try {
-        var matrix = await Matrix.findById(req.params.id);
-    
-        matrix.name = req.body.name;
-        matrix.publicId = req.body.publicId;
-        await matrix.save();
-    
-        return res.status(200).json({
-            id: matrix._id,
-            name: matrix.name,
-            publicId: matrix.publicId
-        });
+        // TODO Validate data
+        var matrixId = req.params.id;
+        var matrixInput = req.body;
+
+        await matrixService.updateAsync(matrixId, matrixInput);
+        var matrix = await matrixService.getByIdAsync(matrixId);
+        
+        return res.status(200).json(matrix);
     }
     catch (err) {
         return next(err);
@@ -85,7 +65,9 @@ router.put("/:id", async (req, res, next) => {
 // Delete Matrix by Id
 router.delete("/:id", async (req, res, next) => {
     try {
-        await Matrix.findByIdAndDelete(req.params.id);
+        // TODO Validate data
+        var matrixId = req.params.id;
+        await matrixService.deleteByIdAsync(matrixId);
 
         return res.status(200).send();
     }

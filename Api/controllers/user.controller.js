@@ -1,23 +1,15 @@
 const express = require("express");
-const User = require("../entities/user.entity");
+const userService = require("../services/user.service");
 
 const router = express.Router();
 
 // Get All Users
 router.get("/", async (req, res, next) => {
     try {
-        var users = await User.find();
-        var responseList = [];
-    
-        users.forEach(user => responseList.push({
-            id: user._id,
-            email: user.email
-        }));
-    
-        return res.status(200).json({
-            list: responseList,
-            totalCount: responseList.length
-        });
+        // TODO Add query parametes for sorting/filtering
+        var listResult = await userService.getAllAsync();
+
+        return res.status(200).json(listResult);
     }
     catch (err) {
         return next(err);
@@ -27,12 +19,11 @@ router.get("/", async (req, res, next) => {
 // Get User by Id
 router.get("/:id", async (req, res, next) => {
     try {
-        var user = await User.findById(req.params.id);
+        // TODO Validate data
+        var userId = req.params.id;
+        var userResult = await userService.getByIdAsync(userId);
 
-        return res.status(200).json({
-            id: user._id,
-            email: user.email
-        });
+        return res.status(200).json(userResult);
     }
     catch (err) {
         return next(err);
@@ -42,15 +33,14 @@ router.get("/:id", async (req, res, next) => {
 // Update User
 router.put("/:id", async (req, res, next) => {
     try {
-        var user = await User.findById(req.params.id);
-    
-        user.email = req.body.email;
-        await user.save();
-    
-        return res.status(200).json({
-            id: user._id,
-            email: user.email
-        });
+        // TODO Validate data
+        var userId = req.params.id;
+        var userInput = req.body;
+        
+        await userService.updateAsync(userId, userInput);
+        var userResult = await userService.getByIdAsync(userId);
+
+        return res.status(200).json(userResult);
     }
     catch (err) {
         return next(err);
@@ -60,7 +50,9 @@ router.put("/:id", async (req, res, next) => {
 // Delete User by Id
 router.delete("/:id", async (req, res, next) => {
     try {
-        await User.findByIdAndDelete(req.params.id);
+        // TODO Validate data
+        var userId = req.params.id;
+        await userService.deleteByIdAsync(userId);
 
         return res.status(200).send();
     }
