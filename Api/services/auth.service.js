@@ -3,8 +3,8 @@ const jwtManager = require("../infrastructure/common/jwt.manager");
 const User = require("../infrastructure/entities/user.entity");
 
 const registerAsync = async (userCredentials) => {
-    var existingUser = await User.findOne({ email: userCredentials.email });
-    if (existingUser) {
+    var userWithSameEmail = await User.findOne({ email: userCredentials.email });
+    if (userWithSameEmail) {
         throw {
             statusCode: 400,
             message: `User with { email: "${userCredentials.email}" } already exists.`

@@ -43,15 +43,18 @@ const updateAsync = async (userId, userInput) => {
         };
     }
 
-    var userWithSameEmail = await User.findOne({ email: userInput.email });
-    if (userWithSameEmail) {
-        throw {
-            statusCode: 400,
-            message: `User with { email: "${userInput.email} } already exists.`
-        };
+    if (userInput.email != user.email) {
+        var userWithSameEmail = await User.findOne({ email: userInput.email });
+        if (userWithSameEmail) {
+            throw {
+                statusCode: 400,
+                message: `User with { email: "${userInput.email} } already exists.`
+            };
+        }
+
+        user.email = userInput.email;
     }
     
-    user.email = userInput.email;
     await user.save();
 };
 
