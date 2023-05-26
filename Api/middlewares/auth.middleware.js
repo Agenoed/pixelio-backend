@@ -1,19 +1,16 @@
 var jwtManager = require("../infrastructure/common/jwt.manager");
+var error = require("../infrastructure/common/error.generator");
 
 const authMiddleware = (req, res, next) => {
     var authHeader = req.headers.authorization;
 
     if (!authHeader) {
-        return res.status(403).json({
-            message: "Authorization Failed."
-        });
+        throw error.notAuthorized("Authorization Failed.");
     }
 
     if (authHeader.split(' ')[0] == "Bearer") {
         if (authHeader.split(' ').length != 2) {
-            return res.status(403).json({
-                message: "Authorization Failed: Invalidate Authentication Header."
-            });
+            throw error.notAuthorized("Authorization Failed: Invalidate Authentication Header.");
         }
 
         var token = authHeader.split(' ')[1];
@@ -28,18 +25,14 @@ const authMiddleware = (req, res, next) => {
                 }
             };
         }
-        else
-        {
-            return res.status(403).json({
-                message: `Authorization Failed: ${tokenValidationResult.error}.`
-            });
+        else {
+            throw error.notAuthorized(`Authorization Failed: ${tokenValidationResult.error}.`);
         }
 
         return next();
-    } else {
-        return res.status(403).json({
-            message: "Authorization Failed: Non-Bearer Authentication is not supported."
-        });
+    }
+    else {
+        throw error.notAuthorized("Authorization Failed: Non-Bearer Authentication is not supported.");
     }
 };
 

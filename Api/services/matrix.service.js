@@ -1,3 +1,4 @@
+const error = require("../infrastructure/common/error.generator");
 const Matrix = require("../infrastructure/entities/matrix.entity");
 
 const getAllAsync = async () => {
@@ -21,10 +22,7 @@ const getAllAsync = async () => {
 const getByIdAsync = async (matrixId) => {
     var matrix = await Matrix.findById(matrixId);
     if (!matrix) {
-        throw {
-            statusCode: 404,
-            message: `Matrix with { id: "${matrixId}" } does not exist.`
-        };
+        throw error.notFound("Matrix", { id: matrixId });
     }
 
     var matrixResult = {
@@ -39,10 +37,7 @@ const getByIdAsync = async (matrixId) => {
 const createAsync = async (matrixInput) => {
     var matrixWithSamePublicId = await Matrix.findOne({ publicId: matrixInput.publicId });
     if (matrixWithSamePublicId) {
-        throw {
-            statusCode: 400,
-            message: `Matrix with { publicId: "${matrixInput.publicId}" } already exists.`
-        };
+        throw error.alreadyExist("Matrix", { publicId: matrixInput.publicId });
     }
 
     var matrix = new Matrix({
@@ -58,19 +53,13 @@ const createAsync = async (matrixInput) => {
 const updateAsync = async (matrixId, matrixInput) => {
     var matrix = await Matrix.findById(matrixId);
     if (!matrix) {
-        throw {
-            statusCode: 404,
-            message: `Matrix with { id: "${matrixId}" } does not exist.`
-        };
+        throw error.notFound("Matrix", { id: matrixId });
     }
 
     if (matrixInput.publicId != matrix.publicId) {
         var matrixWithSamePublicId = await Matrix.findOne({ publicId: matrixInput.publicId });
         if (matrixWithSamePublicId) {
-            throw {
-                statusCode: 400,
-                message: `Matrix with { publicId: "${matrixInput.publicId}" } already exists.`
-            };
+            throw error.alreadyExist("Matrix", { publicId: matrixInput.publicId });
         }
         
         matrix.publicId = matrixInput.publicId;
@@ -83,10 +72,7 @@ const updateAsync = async (matrixId, matrixInput) => {
 const deleteByIdAsync = async (matrixId) => {
     var matrix = await Matrix.findById(matrixId);
     if (!matrix) {
-        throw {
-            statusCode: 404,
-            message: `Matrix with { id: "${matrixId}" } does not exist.`
-        };
+        throw error.notFound("Matrix", { id: matrixId });
     }
 
     await Matrix.findByIdAndDelete(matrixId);
