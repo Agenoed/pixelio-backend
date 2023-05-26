@@ -1,5 +1,5 @@
 const express = require("express");
-const Matrix = require("../entities/matrix.entity");
+const Matrix = require("../infrastructure/entities/matrix.entity");
 
 const router = express.Router();
 

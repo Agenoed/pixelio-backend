@@ -1,5 +1,5 @@
 const express = require("express");
-const User = require("../entities/user.entity");
+const User = require("../infrastructure/entities/user.entity");
 
 const router = express.Router();
 
