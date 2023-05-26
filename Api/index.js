@@ -3,6 +3,7 @@ require("dotenv").config();
 const express = require("express");
 const mongo = require("./common/mongo-db.manager");
 
+const errorHandlerMiddleware = require("./middlewares/error-handler.middleware");
 const authMiddleware = require("./middlewares/auth.middleware");
 
 const authController = require("./controllers/auth.controller");
@@ -16,11 +17,11 @@ const app = express();
 app.use(express.json());
 
 app.use("/api/auth", authController);
+app.use("/api/users", authMiddleware, userController)
+app.use("/api/matrices", authMiddleware, matrixController);
 
-app.use(authMiddleware);
-app.use("/api/users", userController)
-app.use("/api/matrices", matrixController);
+app.use(errorHandlerMiddleware);
 
 app.listen(3000, () => {
-    console.log(`Server Started at ${3000}`)
+    console.log(`Server Started at ${3000}`);
 });

@@ -4,49 +4,69 @@ const User = require("../entities/user.entity");
 const router = express.Router();
 
 // Get All Users
-router.get("/", async (req, res) => {
-    var users = await User.find();
-    var responseList = [];
-
-    users.forEach(user => responseList.push({
-        id: user._id,
-        email: user.email
-    }));
-
-    res.status(200).json({
-        list: responseList,
-        totalCount: responseList.length
-    });
+router.get("/", async (req, res, next) => {
+    try {
+        var users = await User.find();
+        var responseList = [];
+    
+        users.forEach(user => responseList.push({
+            id: user._id,
+            email: user.email
+        }));
+    
+        return res.status(200).json({
+            list: responseList,
+            totalCount: responseList.length
+        });
+    }
+    catch (err) {
+        return next(err);
+    }
 });
 
 // Get User by Id
-router.get("/:id", async (req, res) => {
-    var user = await User.findById(req.params.id);
+router.get("/:id", async (req, res, next) => {
+    try {
+        var user = await User.findById(req.params.id);
 
-    res.status(200).json({
-        id: user._id,
-        email: user.email
-    });
+        return res.status(200).json({
+            id: user._id,
+            email: user.email
+        });
+    }
+    catch (err) {
+        return next(err);
+    }
 });
 
 // Update User
-router.put("/:id", async (req, res) => {
-    var user = await User.findById(req.params.id);
+router.put("/:id", async (req, res, next) => {
+    try {
+        var user = await User.findById(req.params.id);
     
-    user.email = req.body.email;
-    await user.save();
-
-    res.status(200).json({
-        id: user._id,
-        email: user.email
-    });
+        user.email = req.body.email;
+        await user.save();
+    
+        return res.status(200).json({
+            id: user._id,
+            email: user.email
+        });
+    }
+    catch (err) {
+        return next(err);
+    }
 });
 
 // Delete User by Id
-router.delete("/:id", async (req, res) => {
-    await User.findByIdAndDelete(req.params.id);
+router.delete("/:id", async (req, res, next) => {
+    try {
+        await User.findByIdAndDelete(req.params.id);
 
-    res.status(200).send();
+        return res.status(200).send();
+    }
+    catch (err) {
+        return next(err);
+    }
 });
 
 module.exports = router;
