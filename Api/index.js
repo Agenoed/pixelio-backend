@@ -1,26 +1,25 @@
-require('dotenv').config();
+require("dotenv").config();
 
-const express = require('express');
-const mongoose = require('mongoose');
-const mongoString = process.env.DATABASE_URL;
+const express = require("express");
+const mongo = require("./common/mongo-db.manager");
 
-const matricesRoutes = require("./routes/matrices");
+const authMiddleware = require("./middlewares/auth.middleware");
 
-mongoose.connect(mongoString);
-const database = mongoose.connection;
+const authController = require("./controllers/auth.controller");
+const userController = require("./controllers/user.controller");
+const matrixController = require("./controllers/matrix.controller");
 
-database.on('error', (error) => {
-    console.log(error);
-});
-
-database.once('connected', () => {
-    console.log('Database Connected');
-});
+mongo.connect();
 
 const app = express();
 
 app.use(express.json());
-app.use('/api/matrices', matricesRoutes);
+
+app.use("/api/auth", authController);
+
+app.use(authMiddleware);
+app.use("/api/users", userController)
+app.use("/api/matrices", matrixController);
 
 app.listen(3000, () => {
     console.log(`Server Started at ${3000}`)
