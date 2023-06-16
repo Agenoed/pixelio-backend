@@ -1,3 +1,4 @@
+const error = require("../infrastructure/common/error.generator");
 const User = require("../infrastructure/entities/user.entity");
 
 const getAllAsync = async () => {
@@ -20,10 +21,7 @@ const getAllAsync = async () => {
 const getByIdAsync = async (userId) => {
     var user = await User.findById(userId);
     if (!user) {
-        throw {
-            statusCode: 404,
-            message: `User with { id: "${userId}" } does not exist.`
-        };
+        throw error.notFound("User", { id: userId });
     }
 
     var userResult = {
@@ -37,19 +35,13 @@ const getByIdAsync = async (userId) => {
 const updateAsync = async (userId, userInput) => {
     var user = await User.findById(userId);
     if (!user) {
-        throw {
-            statusCode: 404,
-            message: `User with { id: "${userId}" } does not exist.`
-        };
+        throw error.notFound("User", { id: userId });
     }
 
     if (userInput.email != user.email) {
         var userWithSameEmail = await User.findOne({ email: userInput.email });
         if (userWithSameEmail) {
-            throw {
-                statusCode: 400,
-                message: `User with { email: "${userInput.email} } already exists.`
-            };
+            throw error.alreadyExist("User", { email: userInput.email });
         }
 
         user.email = userInput.email;
@@ -61,10 +53,7 @@ const updateAsync = async (userId, userInput) => {
 const deleteByIdAsync = async (userId) => {
     var user = await User.findById(userId);
     if (!user) {
-        throw {
-            statusCode: 404,
-            message: `User with { id: "${userId}" } does not exist.`
-        };
+        throw error.notFound("User", { id: userId });
     }
 
     await User.findByIdAndDelete(userId);
