@@ -104,8 +104,6 @@ const setAsync = async (matrixId, view) => {
 
     matrixView.markModified("pixels");
     await matrixView.save();
-
-    mqttManager.publish("pixelio", "shiiit 123 =)");
 };
 
 const deleteIfExistAsync = async (matrixId) => {
