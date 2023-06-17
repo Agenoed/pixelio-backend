@@ -10,6 +10,7 @@ const authMiddleware = require("./middlewares/auth.middleware");
 const authController = require("./controllers/auth.controller");
 const userController = require("./controllers/user.controller");
 const matrixController = require("./controllers/matrix.controller");
+const matrixViewController = require("./controllers/matrix-view.controller");
 
 mongo.connect();
 
@@ -21,6 +22,7 @@ app.use(cors());
 app.use("/api/auth", authController);
 app.use("/api/users", authMiddleware, userController)
 app.use("/api/matrices", authMiddleware, matrixController);
+app.use("/api/matrices", authMiddleware, matrixViewController);
 
 app.use(errorHandlerMiddleware);
 
