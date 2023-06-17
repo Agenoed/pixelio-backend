@@ -7,7 +7,7 @@ router.get("/:matrixId/view", async (req, res, next) => {
     try {
         var matrixId = req.params.matrixId;
 
-        var matrixView = await matrixViewService.getByMatrixIdAsync(matrixId);
+        var matrixView = await matrixViewService.getAsync(matrixId);
 
         return res.status(200).json(matrixView);
     }
@@ -21,8 +21,9 @@ router.put("/:matrixId/view", async (req, res, next) => {
         var matrixId = req.params.matrixId;
         var view = req.body.view;
 
-        await matrixViewService.setByMatrixIdAsync(matrixId, view);
-        var matrixView = await matrixViewService.getByMatrixIdAsync(matrixId);
+        await matrixViewService.setAsync(matrixId, view);
+        await matrixViewService.sendViaMqttAsync(matrixId);
+        var matrixView = await matrixViewService.getAsync(matrixId);
 
         return res.status(200).json(matrixView);
     }
