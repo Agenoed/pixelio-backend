@@ -4,7 +4,7 @@
 - Create file `.env` in the same directory as `index.js` file;  
 - In `.env` file add code:  
   ```
-  DATABASE_URL = mongodb+srv://<username>:<password>@free-cluster.mtg3w2f.mongodb.net/
+  DATABASE_URL = <mongo_connection_string>
   JWT_SECRET = <jwt_secret>
   JWT_EXPIRATION_SECONDS = <access_token_expiration_time_seconds>
   JWT_AUDIENCE = <jwt_audience>
@@ -12,7 +12,7 @@
   MQTT_URL = <mqtt_url>
   ```  
   Where:  
-  - `<username>` and `<password>`: `string` properties, credentials for your MongoDB User of cluster `free-cluster`;  
+  - `<mongo_connection_string>`: `string` property, connection string to your MongoDB database;  
   - `<jwt_secret>`: `string` property that is needed for **JWT Authorization Token** processing. Secret code, that is used for encoding;  
     - May be random generated string. You can generate one by running the code below in console:  
       ```
