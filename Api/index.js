@@ -14,7 +14,7 @@ const matrixController = require("./controllers/matrix.controller");
 const matrixViewController = require("./controllers/matrix-view.controller");
 
 mongooseManager.connect();
-mqttManager.connect("mqtt://test.mosquitto.org");
+mqttManager.connect(process.env.MQTT_URL);
 
 const app = express();
 

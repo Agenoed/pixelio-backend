@@ -9,6 +9,7 @@
   JWT_EXPIRATION_SECONDS = <access_token_expiration_time_seconds>
   JWT_AUDIENCE = <jwt_audience>
   JWT_ISSUER = <jwt_issuer>
+  MQTT_URL = <mqtt_url>
   ```  
   Where:  
   - `<username>` and `<password>`: `string` properties, credentials for your MongoDB User of cluster `free-cluster`;  
@@ -24,5 +25,7 @@
     - Example: `PixelioFrontend`;  
   - `<jwt_issuer>`: `string` property that is needed for **JWT Authorization Token** processing. **Issuer** name, encoded in **JWT authorization token**;  
     - Example: `PixelioBackendApi`;  
+  - `<mqtt_url>`: `string` property, url of MQTT Broker to use;  
+    - Example: `mqtt://test.mosquitto.org`;  
 - Install necessary dependencies by runing in terminal command `npm install`;  
 - Run Application by running in terminal command `npm start`;  
