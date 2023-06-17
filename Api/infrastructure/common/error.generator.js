@@ -29,7 +29,15 @@ const notAuthorized = (message) => {
     };
 };
 
+const internalServer = (message) => {
+    return {
+        statusCode: 500,
+        message: message
+    };
+};
+
 module.exports.notFound = notFound;
 module.exports.badRequest = badRequest;
 module.exports.alreadyExist = alreadyExist;
 module.exports.notAuthorized = notAuthorized;
+module.exports.internalServer = internalServer;

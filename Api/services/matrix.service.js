@@ -1,6 +1,7 @@
 const error = require("../infrastructure/common/error.generator");
 const Matrix = require("../infrastructure/entities/matrix.entity");
 const User = require("../infrastructure/entities/user.entity");
+const matrixViewService = require("./matrix-view.service");
 
 const getAllAsync = async (filter) => {
     var matrices = await Matrix.find();
@@ -66,6 +67,15 @@ const createAsync = async (matrixInput) => {
 
     await matrix.save();
 
+    var matrixViewCreateOptions = {
+        matrixId: matrix._id,
+        size: {
+            x: 16,
+            y: 16
+        }
+    };
+    await matrixViewService.createAsync(matrixViewCreateOptions);
+
     return matrix._id;
 };
 
@@ -103,6 +113,8 @@ const deleteByIdAsync = async (matrixId) => {
         throw error.notFound("Matrix", { id: matrixId });
     }
 
+    await matrixViewService.deleteByMatrixIdIfExistAsync(matrixId);
+    
     await Matrix.findByIdAndDelete(matrixId);
 };
 
