@@ -2,7 +2,8 @@ require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
-const mongo = require("./infrastructure/common/mongo-db.manager");
+const mongooseManager = require("./infrastructure/common/mongo-db.manager");
+const mqttManager = require("./infrastructure/common/mqtt.manager");
 
 const errorHandlerMiddleware = require("./middlewares/error-handler.middleware");
 const authMiddleware = require("./middlewares/auth.middleware");
@@ -12,7 +13,8 @@ const userController = require("./controllers/user.controller");
 const matrixController = require("./controllers/matrix.controller");
 const matrixViewController = require("./controllers/matrix-view.controller");
 
-mongo.connect();
+mongooseManager.connect();
+mqttManager.connect(process.env.MQTT_URL);
 
 const app = express();
 

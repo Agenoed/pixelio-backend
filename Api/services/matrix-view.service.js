@@ -1,10 +1,11 @@
 const error = require("../infrastructure/common/error.generator");
+const mqttManager = require("../infrastructure/common/mqtt.manager");
 const MatrixView = require("../infrastructure/entities/matrix-view.entity");
 const Matrix = require("../infrastructure/entities/matrix.entity");
 
 const createAsync = async (createOptions) => {
     // TODO Add validation
-    var matrix = Matrix.findById(createOptions.matrixId);
+    var matrix = await Matrix.findById(createOptions.matrixId);
     if (!matrix) {
         throw error.notFound("Matrix", { id: createOptions.matrixId });
     }
@@ -35,8 +36,8 @@ const createAsync = async (createOptions) => {
     matrixView.save();
 };
 
-const getByMatrixIdAsync = async (matrixId) => {
-    var matrix = Matrix.findById(matrixId);
+const getAsync = async (matrixId) => {
+    var matrix = await Matrix.findById(matrixId);
     if (!matrix) {
         throw error.notFound("Matrix", { id: matrixId });
     }
@@ -73,8 +74,8 @@ const getByMatrixIdAsync = async (matrixId) => {
     return matrixViewResult;
 };
 
-const setByMatrixIdAsync = async (matrixId, view) => {
-    var matrix = Matrix.findById(matrixId);
+const setAsync = async (matrixId, view) => {
+    var matrix = await Matrix.findById(matrixId);
     if (!matrix) {
         throw error.notFound("Matrix", { id: matrixId });
     }
@@ -103,10 +104,12 @@ const setByMatrixIdAsync = async (matrixId, view) => {
 
     matrixView.markModified("pixels");
     await matrixView.save();
+
+    mqttManager.publish("pixelio", "shiiit 123 =)");
 };
 
-const deleteByMatrixIdIfExistAsync = async (matrixId) => {
-    var matrix = Matrix.findById(matrixId);
+const deleteIfExistAsync = async (matrixId) => {
+    var matrix = await Matrix.findById(matrixId);
     if (!matrix) {
         throw error.notFound("Matrix", { id: matrixId });
     }
@@ -119,7 +122,33 @@ const deleteByMatrixIdIfExistAsync = async (matrixId) => {
     await MatrixView.findByIdAndDelete(matrixView._id);
 };
 
+const sendViaMqttAsync = async (matrixId) => {
+    var matrix = await Matrix.findById(matrixId);
+    if (!matrix) {
+        throw error.notFound("Matrix", { id: matrixId });
+    }
+
+    var matrixView = await MatrixView.findOne({ matrixId: matrixId });
+    if (!matrixView) {
+        throw error.notFound("MatrixView", { matrixId: matrixId });
+    }
+
+    var topic = `pixelio/${matrix.publicId}`;
+    var payload = [];
+    for (var y = 0; y < matrixView.pixels[0].length; y++) {
+        for (var x = 0; x < matrixView.pixels.length; x++) {
+            var pixelColorRgb = matrixView.pixels[x][y].color.rgb;
+            payload.push(pixelColorRgb.r);
+            payload.push(pixelColorRgb.g);
+            payload.push(pixelColorRgb.b);
+        }
+    }
+
+    mqttManager.publish(topic, Buffer.from(payload));
+};
+
 module.exports.createAsync = createAsync;
-module.exports.getByMatrixIdAsync = getByMatrixIdAsync;
-module.exports.setByMatrixIdAsync = setByMatrixIdAsync;
-module.exports.deleteByMatrixIdIfExistAsync = deleteByMatrixIdIfExistAsync;
+module.exports.getAsync = getAsync;
+module.exports.setAsync = setAsync;
+module.exports.deleteIfExistAsync = deleteIfExistAsync;
+module.exports.sendViaMqttAsync = sendViaMqttAsync;
