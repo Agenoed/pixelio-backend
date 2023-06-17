@@ -113,7 +113,7 @@ const deleteByIdAsync = async (matrixId) => {
         throw error.notFound("Matrix", { id: matrixId });
     }
 
-    await matrixViewService.deleteByMatrixIdIfExistAsync(matrixId);
+    await matrixViewService.deleteIfExistAsync(matrixId);
     
     await Matrix.findByIdAndDelete(matrixId);
 };
