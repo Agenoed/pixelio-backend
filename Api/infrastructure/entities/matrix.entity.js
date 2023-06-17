@@ -8,6 +8,10 @@ const matrixSchema = new mongoose.Schema({
     publicId: {
         required: true,
         type: String
+    },
+    ownerUserId: {
+        required: false,
+        type: String
     }
 });
 
