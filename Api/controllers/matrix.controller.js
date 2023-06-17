@@ -6,8 +6,11 @@ const router = express.Router();
 // Get Matrices List
 router.get("/", async (req, res, next) => {
     try {
-        // TODO Add query parametes for sorting/filtering
-        var listResult = await matrixService.getAllAsync();
+        var filter = {
+            ownerUserId: req.query.ownerUserId
+        };
+
+        var listResult = await matrixService.getAllAsync(filter);
 
         return res.status(200).json(listResult);
     }

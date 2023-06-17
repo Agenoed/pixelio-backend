@@ -1,10 +1,20 @@
 const error = require("../infrastructure/common/error.generator");
 const Matrix = require("../infrastructure/entities/matrix.entity");
+const User = require("../infrastructure/entities/user.entity");
 
-const getAllAsync = async () => {
+const getAllAsync = async (filter) => {
     var matrices = await Matrix.find();
-    var responseList = [];
     
+    if (filter.ownerUserId) {
+        var ownerUser = await User.findById(filter.ownerUserId);
+        if (!ownerUser) {
+            throw error.notFound("User", { id: filter.ownerUserId });
+        }
+
+        matrices = matrices.filter(matrix => matrix.ownerUserId == filter.ownerUserId);
+    }
+
+    var responseList = [];
     matrices.forEach(matrix => responseList.push({
         id: matrix._id,
         name: matrix.name,
@@ -28,7 +38,8 @@ const getByIdAsync = async (matrixId) => {
     var matrixResult = {
         id: matrix._id,
         name: matrix.name,
-        publicId: matrix.publicId
+        publicId: matrix.publicId,
+        ownerUserId: matrix.ownerUserId
     };
 
     return matrixResult;
@@ -40,9 +51,17 @@ const createAsync = async (matrixInput) => {
         throw error.alreadyExist("Matrix", { publicId: matrixInput.publicId });
     }
 
+    if (matrixInput.ownerUserId) {
+        var ownerUser = await User.findById(matrixInput.ownerUserId);
+        if (!ownerUser) {
+            throw error.notFound("User", { id: matrixInput.ownerUserId });
+        }
+    }
+
     var matrix = new Matrix({
         name: matrixInput.name,
-        publicId: matrixInput.publicId
+        publicId: matrixInput.publicId,
+        ownerUserId: matrixInput.ownerUserId
     });
 
     await matrix.save();
@@ -64,8 +83,17 @@ const updateAsync = async (matrixId, matrixInput) => {
         
         matrix.publicId = matrixInput.publicId;
     }
+
+    if (matrixInput.ownerUserId) {
+        var ownerUser = await User.findById(matrixInput.ownerUserId);
+        if (!ownerUser) {
+            throw error.notFound("User", { id: matrixInput.ownerUserId });
+        }
+    }
     
     matrix.name = matrixInput.name;
+    matrix.ownerUserId = matrixInput.ownerUserId;
+
     await matrix.save();
 };
 
