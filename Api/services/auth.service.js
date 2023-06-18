@@ -18,7 +18,10 @@ const registerAsync = async (userCredentials) => {
     await user.save();
 
     var authResult = {
-        userId: user._id,
+        user: {
+            id: user._id,
+            email: user.email
+        },
         accessToken: jwtManager.generate(user._id, user.email)
     };
 
@@ -37,7 +40,10 @@ const loginAsync = async (userCredentials) => {
     }
 
     var authResult = {
-        userId: user._id,
+        user: {
+            id: user._id,
+            email: user.email
+        },
         accessToken: jwtManager.generate(user._id, user.email)
     };
 
